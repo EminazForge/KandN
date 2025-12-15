@@ -97,6 +97,7 @@ class Gear():
         else:
             self.affix_descriptions = ""
 
+<<<<<<< HEAD
         # -------------------------- apply effects --------------------------
         # Separate base boni (from base after local modifiers) and global affix boni
         # 1) Apply local affixes to base implicits
@@ -130,6 +131,35 @@ class Gear():
 
         # Public combined view
         self.boni = self.base_boni + self.affix_boni
+=======
+        # -------------------------- modify boni ----------------------------
+        # handle implicit modifiers
+        for prefix in self.prefixes:
+            if self.base is not None and getattr(prefix, "xStat", None) == "impl":
+                if getattr(prefix, "xType", None) == "additive":
+                    self.base.modify_base_values(add_mod=getattr(prefix, "xValue", 0))
+                elif getattr(prefix, "xType", None) == "multiplicative":
+                    self.base.modify_base_values(multi_mod=getattr(prefix, "xValue", 0))
+
+        # handle suffixes that change requirements
+        for suffix in self.suffixes:
+            if getattr(suffix, "xStat", None) == "att_red":
+                self.req_red += getattr(suffix, "xValue", 0)
+            if getattr(suffix, "xStat", None) == "lvl_red":  # align key name
+                self.lvl_req_red += getattr(suffix, "xValue", 0)
+
+        # -------------------------- apply boni -----------------------------
+        self.boni = []
+        if self.base is not None:
+            for bonus in getattr(self.base, "boni", []):
+                self.boni.append(bonus)
+
+        for prefix in self.prefixes:
+            self.boni.extend(getattr(prefix, "boni", []))
+
+        for suffix in self.suffixes:
+            self.boni.extend(getattr(suffix, "boni", []))
+>>>>>>> 7f87aba291bb5583f499a5dfb6ab6c8c40828be4
 
     def determine_reqs(self):
         # stat requirements (apply req_red collected from suffixes)
@@ -201,5 +231,9 @@ if __name__ == "__main__":
     prefixes = [affix_loader.create_random_affix("Prefix", ilvl, base.slot)]
     suffixes = [affix_loader.create_random_affix("Suffix", ilvl, base.slot)]
 
+<<<<<<< HEAD
     gear = Gear(rarity="Magic", base=base, exceptional=False, prefixes=prefixes, suffixes=suffixes)
+=======
+    gear = Gear(name=None, rarity="Magic", base=base, exceptional=False, prefixes=prefixes, suffixes=suffixes)
+>>>>>>> 7f87aba291bb5583f499a5dfb6ab6c8c40828be4
     print(gear)
