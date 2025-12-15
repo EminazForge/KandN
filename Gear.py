@@ -97,7 +97,6 @@ class Gear():
         else:
             self.affix_descriptions = ""
 
-<<<<<<< HEAD
         # -------------------------- apply effects --------------------------
         # Separate base boni (from base after local modifiers) and global affix boni
         # 1) Apply local affixes to base implicits
@@ -131,35 +130,6 @@ class Gear():
 
         # Public combined view
         self.boni = self.base_boni + self.affix_boni
-=======
-        # -------------------------- modify boni ----------------------------
-        # handle implicit modifiers
-        for prefix in self.prefixes:
-            if self.base is not None and getattr(prefix, "xStat", None) == "impl":
-                if getattr(prefix, "xType", None) == "additive":
-                    self.base.modify_base_values(add_mod=getattr(prefix, "xValue", 0))
-                elif getattr(prefix, "xType", None) == "multiplicative":
-                    self.base.modify_base_values(multi_mod=getattr(prefix, "xValue", 0))
-
-        # handle suffixes that change requirements
-        for suffix in self.suffixes:
-            if getattr(suffix, "xStat", None) == "att_red":
-                self.req_red += getattr(suffix, "xValue", 0)
-            if getattr(suffix, "xStat", None) == "lvl_red":  # align key name
-                self.lvl_req_red += getattr(suffix, "xValue", 0)
-
-        # -------------------------- apply boni -----------------------------
-        self.boni = []
-        if self.base is not None:
-            for bonus in getattr(self.base, "boni", []):
-                self.boni.append(bonus)
-
-        for prefix in self.prefixes:
-            self.boni.extend(getattr(prefix, "boni", []))
-
-        for suffix in self.suffixes:
-            self.boni.extend(getattr(suffix, "boni", []))
->>>>>>> 7f87aba291bb5583f499a5dfb6ab6c8c40828be4
 
     def determine_reqs(self):
         # stat requirements (apply req_red collected from suffixes)
@@ -208,9 +178,32 @@ class Gear():
             f"\n==========================================\n"
         )
 
-    def __str__(self):
-        # Return the prebuilt full description for performance/readability
+    def to_tooltip(self):
+        # Public method to retrieve the full multi-line tooltip
         return self.full_description
+
+    def to_dict(self):
+        # Structured representation for testing/UI
+        return {
+            "name": self.name_description.split("\n")[0],
+            "rarity": self.rarity,
+            "slot": self.slot,
+            "ilvl_req": self.lvl_req,
+            "reqs": {
+                "str": getattr(self, "str_req", 0),
+                "int": getattr(self, "int_req", 0),
+                "dex": getattr(self, "dex_req", 0),
+            },
+            "base_description": self.base_descriptions,
+            "affix_descriptions": self.affix_descriptions,
+            "base_boni": [str(b) for b in getattr(self, "base_boni", [])],
+            "affix_boni": [str(b) for b in getattr(self, "affix_boni", [])],
+        }
+
+    def __str__(self):
+        # Concise one-liner for logging/debugging
+        primary = self.name_description.split("\n")[0]
+        return f"{primary} ({self.rarity})"
 
 
 if __name__ == "__main__":
@@ -231,9 +224,5 @@ if __name__ == "__main__":
     prefixes = [affix_loader.create_random_affix("Prefix", ilvl, base.slot)]
     suffixes = [affix_loader.create_random_affix("Suffix", ilvl, base.slot)]
 
-<<<<<<< HEAD
     gear = Gear(rarity="Magic", base=base, exceptional=False, prefixes=prefixes, suffixes=suffixes)
-=======
-    gear = Gear(name=None, rarity="Magic", base=base, exceptional=False, prefixes=prefixes, suffixes=suffixes)
->>>>>>> 7f87aba291bb5583f499a5dfb6ab6c8c40828be4
-    print(gear)
+    print(gear.to_tooltip())

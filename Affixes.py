@@ -85,7 +85,7 @@ class AffixLoader():
             print(f"Error: No available {affixType} affixes for {gear_slot} (all used or none defined).")
             return None
         
-        weights = [bt['dropChance'] for bt in js_affixes]
+        weights = [bt['weight'] for bt in js_affixes]
         
         js_affix = random.choices(js_affixes, weights=weights)[0]
         

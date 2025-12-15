@@ -227,7 +227,7 @@ class ItemGenerator():
 if __name__ == "__main__":
     generator = ItemGenerator()
     item = generator.generateItem()
-    print(item)
+    print(item.to_tooltip())
     
     print("Boni:")
     for bonus in item.boni:
