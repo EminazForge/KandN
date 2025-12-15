@@ -154,37 +154,7 @@ class ItemGenerator():
     
         return baseType
             
-    def random_name(self, base, rarity, prefixes, suffixes):
-
-        base_name = base.name   
-        
-        if rarity == "Normal":
-            return base_name
-        
-        if rarity == "Magic":
-            
-            prefix_name = ""
-            suffix_name = ""
-            if prefixes != []:   
-                prefix_name = prefixes[0].clearName + " "
-            if suffixes != []: 
-                suffix_name = " " + suffixes[0].clearName
-                
-            return f"{prefix_name}{base_name}{suffix_name}"
-
-        elif rarity == "Rare":
-        
-            pref_names = []
-        
-            for prefix in prefixes:
-                pref_names.append(prefix.name)
-            for suffix in suffixes:
-                pref_names.append(suffix.name)
-                
-            pref_name = rand.choice(pref_names)
-            base_name = base.vagueName
-
-            return f"{pref_name} {base_name}"
+    # Name is derived in Gear; legacy method removed for clarity.
     
     
     def generateItem(
@@ -192,7 +162,7 @@ class ItemGenerator():
             ilvl=25,
             category="Gear",
             rarity="Rare",
-            gearSlot="Weapon",
+            gearSlot="random",
             baseType="random",
             potionType="random",
             item_find=0,

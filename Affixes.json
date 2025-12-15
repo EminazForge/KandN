@@ -9,7 +9,8 @@
         "tags": ["physical", "damage"],
         "xStat": "impl",
         "xType": "multiplicative",
-        "xRange": [10, 200]
+        "xRange": [10, 200],
+        "scope": "local"
     },
     "Sharp": {
         "type": "Prefix",
@@ -21,7 +22,8 @@
         "tags": ["physical", "damage"],
         "xStat": "impl",
         "xType": "additive",
-        "xRange": [1, 100]
+        "xRange": [1, 100],
+        "scope": "local"
     },
     "Surging": {
         "type": "Prefix",
@@ -33,7 +35,8 @@
         "tags": ["spell", "damage"],
         "xStat": "impl",
         "xType": "multiplicative",
-        "xRange": [1, 100]
+        "xRange": [1, 100],
+        "scope": "local"
     },
     "Vigorous": {
         "type": "Prefix",
@@ -45,7 +48,8 @@
         "tags": ["ressource", "life"],
         "xStat": "hp",
         "xType": "additive",
-        "xRange": [1, 100]
+        "xRange": [1, 100],
+        "scope": "global"
     },
     "Vital": {
         "type": "Prefix",
@@ -57,7 +61,8 @@
         "tags": ["ressource", "life"],
         "xStat": "hp",
         "xType": "multiplicative",
-        "xRange": [1, 15]
+        "xRange": [1, 15],
+        "scope": "global"
     },
     "Spirited": {
         "type": "Prefix",
@@ -69,7 +74,8 @@
         "tags": ["ressource", "mana"],
         "xStat": "mana",
         "xType": "additive",
-        "xRange": [1, 150]
+        "xRange": [1, 150],
+        "scope": "global"
     },
     "Utility": {
         "type": "Prefix",
@@ -81,7 +87,8 @@
         "tags": ["potion"],
         "xStat": "psl",
         "xType": "additive",
-        "xRange": [1, 1]
+        "xRange": [1, 1],
+        "scope": "global"
     },
     "Reinforced": {
         "type": "Prefix",
@@ -93,7 +100,8 @@
         "tags": ["defense"],
         "xStat": "armor",
         "xType": "additive",
-        "xRange": [1, 50]
+        "xRange": [1, 50],
+        "scope": "global"
     },
     "Vision": {
         "type": "Prefix",
@@ -105,7 +113,8 @@
         "tags": ["physical"],
         "xStat": "acc",
         "xType": "additive",
-        "xRange": [1, 15]
+        "xRange": [1, 15],
+        "scope": "global"
     },
     "Greed": {
         "type": "Prefix",
@@ -117,7 +126,8 @@
         "tags": ["misc"],
         "xStat": "gfin",
         "xType": "additive",
-        "xRange": [1, 100]
+        "xRange": [1, 100],
+        "scope": "global"
     },
     "Merchant": {
         "type": "Prefix",
@@ -129,7 +139,8 @@
         "tags": ["misc"],
         "xStat": "mpr",
         "xType": "additive",
-        "xRange": [1, 50]
+        "xRange": [1, 50],
+        "scope": "global"
     },
     "Search": {
         "type": "Prefix",
@@ -141,7 +152,8 @@
         "tags": ["misc"],
         "xStat": "mfin",
         "xType": "additive",
-        "xRange": [1, 50]
+        "xRange": [1, 50],
+        "scope": "global"
     },
     "Mind": {
         "type": "Suffix",
@@ -153,7 +165,8 @@
         "tags": ["attributes"],
         "xStat": "int",
         "xType": "additive",
-        "xRange": [1, 25]
+        "xRange": [1, 25],
+        "scope": "global"
     },
     "Muscle": {
         "type": "Suffix",
@@ -165,7 +178,8 @@
         "tags": ["attributes", "int"],
         "xStat": "str",
         "xType": "additive",
-        "xRange": [1, 25]
+        "xRange": [1, 25],
+        "scope": "global"
     },
     "Black": {
         "type": "Suffix",
@@ -177,7 +191,8 @@
         "tags": ["attributes", "str"],
         "xStat": "dex",
         "xType": "additive",
-        "xRange": [1, 25]
+        "xRange": [1, 25],
+        "scope": "global"
     },
     "Insulation": {
         "type": "Suffix",
@@ -189,7 +204,8 @@
         "tags": ["resistances", "shock"],
         "xStat": "shres",
         "xType": "additive",
-        "xRange": [1, 40]
+        "xRange": [1, 40],
+        "scope": "global"
     },
     "Warmth": {
         "type": "Suffix",
@@ -201,7 +217,8 @@
         "tags": ["resistances", "fire"],
         "xStat": "frres",
         "xType": "additive",
-        "xRange": [1, 40]
+        "xRange": [1, 40],
+        "scope": "global"
     },
     "Cooling": {
         "type": "Suffix",
@@ -213,7 +230,8 @@
         "tags": ["resistances", "frost"],
         "xStat": "frres",
         "xType": "additive",
-        "xRange": [1, 40]
+        "xRange": [1, 40],
+        "scope": "global"
     },
     "Glowing": {
         "type": "Suffix",
@@ -225,7 +243,8 @@
         "tags": ["resistances", "chaos"],
         "xStat": "chres",
         "xType": "additive",
-        "xRange": [1, 40]
+        "xRange": [1, 40],
+        "scope": "global"
     },
     "Training": {
         "type": "Suffix",
@@ -237,7 +256,8 @@
         "tags": ["requirements"],
         "xStat": "att_red",
         "xType": "additive",
-        "xRange": [15, 50]
+        "xRange": [15, 50],
+        "scope": "global"
     },
     "Pioneer": {
         "type": "Suffix",
@@ -249,6 +269,7 @@
         "tags": ["requirements"],
         "xStat": "lvl_red",
         "xType": "additive",
-        "xRange": [2, 25]
+        "xRange": [2, 25],
+        "scope": "global"
     }
 }

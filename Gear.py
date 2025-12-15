@@ -97,33 +97,39 @@ class Gear():
         else:
             self.affix_descriptions = ""
 
-        # -------------------------- modify boni ----------------------------
-        # handle implicit modifiers
-        for prefix in self.prefixes:
-            if self.base is not None and getattr(prefix, "xStat", None) == "impl":
-                if getattr(prefix, "xType", None) == "additive":
-                    self.base.modify_base_values(add_mod=getattr(prefix, "xValue", 0))
-                elif getattr(prefix, "xType", None) == "multiplicative":
-                    self.base.modify_base_values(multi_mod=getattr(prefix, "xValue", 0))
-
-        # handle suffixes that change requirements
-        for suffix in self.suffixes:
-            if getattr(suffix, "xStat", None) == "att_red":
-                self.req_red += getattr(suffix, "xValue", 0)
-            if getattr(suffix, "xStat", None) == "lvl_red":  # align key name
-                self.lvl_req_red += getattr(suffix, "xValue", 0)
-
-        # -------------------------- apply boni -----------------------------
-        self.boni = []
+        # -------------------------- apply effects --------------------------
+        # Separate base boni (from base after local modifiers) and global affix boni
+        # 1) Apply local affixes to base implicits
         if self.base is not None:
-            for bonus in getattr(self.base, "boni", []):
-                self.boni.append(bonus)
+            for aff in (self.prefixes + self.suffixes):
+                if getattr(aff, "scope", "global") == "local":
+                    xType = getattr(aff, "xType", None)
+                    xValue = getattr(aff, "xValue", 0)
+                    if xType == "additive":
+                        self.base.modify_base_values(add_mod=xValue)
+                    elif xType == "multiplicative":
+                        self.base.modify_base_values(multi_mod=xValue)
 
-        for prefix in self.prefixes:
-            self.boni.extend(getattr(prefix, "boni", []))
+        # 2) Requirement reducers (global effects that aren't normal boni)
+        for aff in (self.prefixes + self.suffixes):
+            if getattr(aff, "xStat", None) == "att_red":
+                self.req_red += getattr(aff, "xValue", 0)
+            if getattr(aff, "xStat", None) == "lvl_red":
+                self.lvl_req_red += getattr(aff, "xValue", 0)
 
-        for suffix in self.suffixes:
-            self.boni.extend(getattr(suffix, "boni", []))
+        # 3) Aggregate boni
+        self.base_boni = []
+        self.affix_boni = []
+
+        if self.base is not None:
+            self.base_boni.extend(getattr(self.base, "boni", []))
+
+        for aff in (self.prefixes + self.suffixes):
+            if getattr(aff, "scope", "global") == "global":
+                self.affix_boni.extend(getattr(aff, "boni", []))
+
+        # Public combined view
+        self.boni = self.base_boni + self.affix_boni
 
     def determine_reqs(self):
         # stat requirements (apply req_red collected from suffixes)
@@ -195,5 +201,5 @@ if __name__ == "__main__":
     prefixes = [affix_loader.create_random_affix("Prefix", ilvl, base.slot)]
     suffixes = [affix_loader.create_random_affix("Suffix", ilvl, base.slot)]
 
-    gear = Gear(name=None, rarity="Magic", base=base, exceptional=False, prefixes=prefixes, suffixes=suffixes)
+    gear = Gear(rarity="Magic", base=base, exceptional=False, prefixes=prefixes, suffixes=suffixes)
     print(gear)

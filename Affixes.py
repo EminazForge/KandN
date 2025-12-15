@@ -48,8 +48,7 @@ class AffixLoader():
         """
         
         random_vague_name = random.choice(list(self.affixList.keys()))
-        
-        return self.get_affix_by_name(affixList, random_vague_name)
+        return self.get_affix_by_name(self.affixList, random_vague_name)
     
     def get_affixes_for_slot(self, affixType, gear_slot):
         """
@@ -112,6 +111,9 @@ class Affix():
         self.xType = json_affix["xType"] # string
         self.xRange = json_affix["xRange"] # int array
         self.xValue = 0
+
+        # explicit scope for local/global behavior
+        self.scope = json_affix.get("scope", "global")
         
         self.yStat = json_affix.get("yStat") # string array
         self.yType = json_affix.get("yType") # string
@@ -143,29 +145,32 @@ class Affix():
             self.zValue = (self.zRange[-1] - self.zRange[0]) * ilvl/100 * roll + self.zRange[0]
             self.zValue = round(self.zValue)
         
-        # create boni
+        # create boni (only for global scope)
         self.boni = []
-        if self.xType == "additive":
-            self.boni.append(Bonus.Bonus(self.xStat, self.xValue, 0)) 
-        elif self.xType == "multiplicative":
-            self.boni.append(Bonus.Bonus(self.xStat, 0 , self.xValue))
+        if self.scope == "global":
+            if self.xType == "additive":
+                self.boni.append(Bonus.Bonus(self.xStat, self.xValue, 0)) 
+            elif self.xType == "multiplicative":
+                self.boni.append(Bonus.Bonus(self.xStat, 0 , self.xValue))
             
-        if self.yStat != None:
+        if self.scope == "global" and self.yStat != None:
             if self.yType == "additive":
                 self.boni.append(Bonus.Bonus(self.yStat, self.yValue, 0)) 
             elif self.yType == "multiplicative":
                 self.boni.append(Bonus.Bonus(self.yStat, 0 , self.yValue))
                 
-        if self.zStat != None:
+        if self.scope == "global" and self.zStat != None:
             if self.zType == "additive":
                 self.boni.append(Bonus.Bonus(self.zStat, self.zValue, 0)) 
-            elif self.xType == "multiplicative":
+            elif self.zType == "multiplicative":
                 self.boni.append(Bonus.Bonus(self.zStat, 0 , self.zValue))
                   
         # create description
         self.description = self.ph_description.replace("xValue", str(self.xValue))
-        self.description = self.description.replace("xValue", str(self.xValue))
-        self.description = self.description.replace("xValue", str(self.xValue))
+        if self.yStat is not None:
+            self.description = self.description.replace("yValue", str(self.yValue))
+        if self.zStat is not None:
+            self.description = self.description.replace("zValue", str(self.zValue))
         
     def has_tag(self, tag):
         if tag in self.tags:
