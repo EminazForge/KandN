@@ -199,7 +199,6 @@ class ItemGenerator():
             exclude=[],
             ):
         
-        item_name = ""
         base = []
         prefixes = []
         suffixes = []
@@ -231,14 +230,11 @@ class ItemGenerator():
             # roll number of affixes
             prefixes, suffixes = self.random_affixes(rarity, ilvl, base)
             
-            # randomize name
-            item_name = self.random_name(base, rarity, prefixes, suffixes)
-            
             # exceptionality
             exceptional = rand.choices([False, True], weights=[100, 5])[0]
             
             # create gear
-            item = Gear.Gear(item_name, rarity, base, exceptional, prefixes, suffixes)
+            item = Gear.Gear(rarity=rarity, base=base, exceptional=exceptional, prefixes=prefixes, suffixes=suffixes)
             
             return item
             
