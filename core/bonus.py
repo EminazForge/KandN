@@ -1,5 +1,4 @@
-
-class Bonus():
+class Bonus:
     """
     A bonus that can be added to the player stats
     """

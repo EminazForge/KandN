@@ -2,39 +2,50 @@ import json
 import os
 import random
 import sys
-import Bonus
+from core import bonus as Bonus
 
 # --- Configuration ---
-JSON_FILE_PATH = "Affixes.json"
+JSON_FILE_NAME = "Affixes.json"
+
+def _candidate_paths(filename: str):
+    here = os.path.dirname(__file__)              # .../core/items
+    root = os.path.dirname(os.path.dirname(here)) # project root
+    return [
+        os.path.join(root, "data", filename),   # preferred location
+        os.path.join(root, filename),            # legacy root location
+    ]
 
 class AffixLoader():
     
     def __init__(self):
         
-        self.affixList = self.load_data(JSON_FILE_PATH)
+        self.affixList = self.load_data()
         self.used_affixes = []
     
-    def load_data(self, file_path=JSON_FILE_PATH):
+    def load_data(self, file_path: str | None = None):
         """
         Loads affix data from a JSON file and returns it as a Python dictionary.
         """
-        
-        if not os.path.exists(file_path):
-            print(f"Warning: File '{file_path}' not found. Returning empty data.")
-            return {}
-        
-        try:
-            with open(file_path, 'r') as f:
-                data = json.load(f)
-            #print(f"Affix data was loaded from {file_path}")
-            return data
-        except json.JSONDecodeError as e:
-            print(f"Error decoding JSON from {file_path}: {e}. File might be corrupted.")
-            sys.exit()
-            return {}
-        except IOError as e:
-            print(f"Error loading data from {file_path}: {e}")
-            return {}
+        # Determine candidate paths (data/ then root/) unless an explicit path is provided
+        paths = [file_path] if file_path else _candidate_paths(JSON_FILE_NAME)
+        last_err = None
+        for p in paths:
+            try:
+                if p and os.path.exists(p):
+                    with open(p, 'r') as f:
+                        data = json.load(f)
+                    return data
+            except json.JSONDecodeError as e:
+                last_err = e
+                break
+            except OSError as e:
+                last_err = e
+                continue
+        if last_err:
+            print(f"Error loading affix data: {last_err}")
+        else:
+            print(f"Warning: Affix data file not found in any expected location: {paths}")
+        return {}
         
     def get_affix_by_name(self, affixList, name):
         """
@@ -178,18 +189,3 @@ class Affix():
         
     def __str__(self):
         return f"{self.name} ({self.clearName}) | {self.typ} \nSlots: {self.slots}\n{self.description}\n{self.xStat} | {self.xType} | {self.xRange} | {self.xValue}\n"
-
-
-
-if __name__ == "__main__":
-    affixLoader = AffixLoader()
-    affixList = affixLoader.load_data()
-        
-    prefixes = affixLoader.get_affixes("Prefix")
-    suffixes = affixLoader.get_affixes("Suffix")
-    
-    print("Affix data analysis:")
-    print(f"Number of affixes:  {len(affixList)}")
-    print(f"Number of prefixes: {len(prefixes)} ({(len(prefixes) / len(affixList) * 100):.1f} %)")
-    print(f"Number of suffixes: {len(suffixes)} ({(len(suffixes) / len(affixList) * 100):.1f} %)")
-

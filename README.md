@@ -1,51 +1,68 @@
-# K&N Item/Character System
+# K&N — Systems Sandbox (Items, Character, Skill Tree)
 
-This repository contains a small Python project for generating items (bases and affixes), assembling gear, and managing a character with stats and equipment.
+This project explores core ARPG-style systems in Python: item and gear generation, character stats/equipment, and a procedural, infinite skill grid with a minimal Pygame UI.
 
-## Structure
+## What’s Included
+- Items & Affixes: data-driven bases and affixes with weighted rolls (see `data/`).
+- Equipment & Character: equip rules and stat aggregation (see `systems/`, `core/`).
+- Skill Grid (NEW): infinite 2D grid composed of 5x5 clusters; connectors reveal neighboring clusters. Pygame viewer supports pan/zoom and selection (see `game/skill_tree/`).
+- Scripts/Demos: quick runners and sandboxes (see `scripts/` and `game/skill_tree/demo.py`).
+- Tests (scaffold): structure in place for future coverage.
 
-- `Affixes.py`, `Affixes.json`: Affix definitions and loader
-- `Bases.py`, `Bases.json`: Base item definitions and loader
-- `Gear.py`: Item assembly and bonuses application
-- `ItemGenerator.py`: Orchestrates random item generation
-- `Character.py`: Character stats, equipment, and equipping rules
-- `Stat.py`, `Bonus.py`: Primitive stat and bonus models
+## Repository Layout
+- `core/`: character, stats, bonus, and item domain models.
+- `systems/`: equipment assembly and item generator orchestrations.
+- `game/`: gameplay features
+	- `skill_tree/`: procedural grid, deterministic RNG, and Pygame UI demo.
+	- `skills/`, `combat/`: placeholders for future gameplay.
+- `data/`: JSON assets and helpers (`Affixes.json`, `Bases.json`, plus loaders).
+- `scripts/`: quick demos (e.g., item generation showcase).
+- `utils/`: shared helpers.
+- `tests/`: unit tests scaffold.
 
-## Weight Model (Probabilities)
+## Quick Start (Windows)
+Prereqs: Python 3.14. For the Pygame demo, install `pygame-ce` once per interpreter.
 
-- Selections are weighted, not percentage-based. Each entry has a `weight`; the probability of picking one entry equals its weight divided by the sum of weights in the selection pool.
-- Bases: `Bases.json` includes `weight` per base. `Bases.py` uses `random.choices(..., weights=...)` and provides an analysis utility that prints normalized chances per base and per slot (overall and within allowed item-level pools).
-- Affixes: `Affixes.json` includes `weight` per affix. `Affixes.py` filters by slot and type, then samples with weights.
-
-## Affix Scope (Local vs Global)
-
-- `scope` in `Affixes.json` controls behavior:
-	- `local`: modifies implicit base values before aggregation (e.g., local damage on weapons).
-	- `global`: contributes explicit bonuses to the item’s aggregated bonuses.
-- `Gear.py` applies locals to the base and adds globals to the item’s `boni` list.
-
-## Responsibilities Split
-
-- `ItemGenerator.py`: chooses category, rarity, base, and rolls affixes.
-- `Gear.py`: derives item name, computes requirements, applies affixes (local/global), and renders tooltip via `to_tooltip()`.
-
-## Quick Runs (Windows)
-
-- Generate a random item and print its tooltip:
+- Install Pygame into your chosen interpreter:
 	```powershell
-	& $Env:LOCALAPPDATA\Programs\Python\Python314\python.exe "u:/Privat/Scripts/K&N/ItemGenerator.py"
-	```
-- Explore base data, weights, and normalized probabilities:
-	```powershell
-	& $Env:LOCALAPPDATA\Programs\Python\Python314\python.exe "u:/Privat/Scripts/K&N/Bases.py"
+	# System interpreter
+	& $Env:LOCALAPPDATA\Programs\Python\Python314\python.exe -m pip install pygame-ce
+
+	# Or your venv (from the repo root)
+	cd "u:/Privat/Scripts/K&N"
+	.\.venv\Scripts\python.exe -m pip install pygame-ce
 	```
 
-## Data Requirements
+- Run item generator demo:
+	```powershell
+	& $Env:LOCALAPPDATA\Programs\Python\Python314\python.exe "u:/Privat/Scripts/K`&N/scripts/demo_generate.py"
+	```
 
-- Base entry: `name`, `slot`, `weight`, requirement fields (`lvl_req`, `str_req`, `int_req`, `dex_req`), implicit stat descriptors (`xStat/xType/xValue`, optional `y`/`z`).
-- Affix entry: `type`, `name`, `clearName`, `slots`, `weight`, ranges (`xRange`, optional `yRange/zRange`), and `scope`.
+- Run the skill grid viewer (Pygame):
+	```powershell
+	# Using system Python
+	& $Env:LOCALAPPDATA\Programs\Python\Python314\python.exe -m game.skill_tree.demo
 
-## Next Steps
+	# Or using your venv
+	cd "u:/Privat/Scripts/K&N"
+	.\.venv\Scripts\python.exe -m game.skill_tree.demo
+	```
 
-- Add CLI args to `Bases.py` (e.g., `--ilvl`, `--topN`) to inspect different pools quickly.
-- Add CLI args to `ItemGenerator.py` (e.g., `--rarity`, `--slot`, `--ilvl`) for targeted generation.
+Tip: The path contains an ampersand (`K&N`), so quote paths and escape `&` as needed (PowerShell treats `&` as an operator).
+
+## Skill Grid Snapshot
+- Clusters: 5x5 nodes that tile seamlessly; origin starts at the center.
+- Connectors: real nodes beyond the border; assigning one reveals the neighboring cluster and maps the connector to a border node in that cluster.
+- Affinities: Red, Blue, Yellow, plus mixed (Orange, Green, Violet). Cluster tint reflects bias.
+- Node Types: Passive (circle), Skill (rectangle), Habit (triangle), Empty (hollow); assigned nodes render filled.
+- Determinism: generation is seeded by world seed and cluster coordinates.
+
+## Notes
+- Selections use weighted randomness; distributions are hard-coded for now.
+- Data assets in `data/` define bases and affixes used by the generator.
+
+## Roadmap (High Level)
+- Pathing rules and reachability highlights on the skill grid.
+- Persistence for discovered clusters and selected nodes.
+- Skill/habit effect plumbing into character systems.
+- Expanded tests and profiling on large grids.

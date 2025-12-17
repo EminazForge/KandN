@@ -1,4 +1,4 @@
-class Gear():
+class Gear:
     def __init__(self,
                  name: str | None = None,
                  rarity: str = "normal",
@@ -83,6 +83,11 @@ class Gear():
         else:
             # Fallback for unexpected rarity values
             self.name_description = self.name if explicit else base_name
+
+        # Ensure public `name` is a usable primary display string
+        # If no explicit name was provided, default to the first line of the constructed name.
+        if not self.name and hasattr(self, "name_description") and self.name_description:
+            self.name = self.name_description.split("\n")[0]
 
     def apply_affixes(self):
         # --------------------------- descriptions --------------------------
@@ -208,8 +213,8 @@ class Gear():
 
 if __name__ == "__main__":
     # Standalone demo using real Bases and Affixes loaders.
-    import Affixes
-    import Bases
+    from core.items import affixes as Affixes
+    from core.items import bases as Bases
 
     # Choose an item level and slot to demonstrate
     ilvl = 20

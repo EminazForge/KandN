@@ -1,7 +1,8 @@
 import random as rand
-from Affixes import AffixLoader
-from Bases import BaseTypeLoader
-import Gear
+from core.items.affixes import AffixLoader
+from core.items.bases import BaseTypeLoader
+from core.items.gear import Gear
+
 
 class ItemGenerator():
     
@@ -161,7 +162,7 @@ class ItemGenerator():
             self,
             ilvl=25,
             category="Gear",
-            rarity="Rare",
+            rarity="random",
             gearSlot="random",
             baseType="random",
             potionType="random",
@@ -204,7 +205,7 @@ class ItemGenerator():
             exceptional = rand.choices([False, True], weights=[100, 5])[0]
             
             # create gear
-            item = Gear.Gear(rarity=rarity, base=base, exceptional=exceptional, prefixes=prefixes, suffixes=suffixes)
+            item = Gear(rarity=rarity, base=base, exceptional=exceptional, prefixes=prefixes, suffixes=suffixes)
             
             return item
             
@@ -222,13 +223,30 @@ class ItemGenerator():
             # Roll gold amount (function of ilvl)
             gold_amount = round(1 + rand.random() * 20 * ilvl)
             print(f"Gold amount: {gold_amount}")
-                    
+
+
+def main(argv=None):
+    import argparse
+    import random
+    parser = argparse.ArgumentParser(description="Generate items for testing")
+    parser.add_argument("--slot", dest="slot", default="random", choices=[
+        "random","Weapon","Offhand","Helmet","BodyArmor","Boots","Belt","Amulet","Ring"
+    ], help="Gear slot to target")
+    parser.add_argument("--ilvl", dest="ilvl", type=int, default=1, help="Item level")
+    parser.add_argument("--rarity", dest="rarity", default="random", choices=["random","Normal","Magic","Rare"], help="Item rarity")
+    parser.add_argument("--count", dest="count", type=int, default=1, help="How many to generate")
+    parser.add_argument("--seed", dest="seed", type=int, default=None, help="Random seed for reproducibility")
+    args = parser.parse_args(argv)
+
+    if args.seed is not None:
+        random.seed(args.seed)
+        rand.seed(args.seed)
+
+    gen = ItemGenerator()
+    for i in range(args.count):
+        item = gen.generateItem(ilvl=args.ilvl, category="Gear", rarity=args.rarity, gearSlot=args.slot)
+        print(item.to_tooltip())
+
 
 if __name__ == "__main__":
-    generator = ItemGenerator()
-    item = generator.generateItem()
-    print(item.to_tooltip())
-    
-    print("Boni:")
-    for bonus in item.boni:
-        print(bonus)
+    main()

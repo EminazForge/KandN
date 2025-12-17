@@ -1,4 +1,4 @@
-class Stat():
+class Stat:
     def __init__(self, name="NoName", sid="NoID", base=0, decimals=2, minimum=-1e6, maximum=1e6):
         self.name= name
         self.sid = sid
@@ -32,4 +32,4 @@ class Stat():
         
     
     def __str__(self):
-        return f"{self.name} | {self.sid} | base: {self.base} | added: {self.total_additives} | multi: {self.total_multiplier} | total: {self.total}"     
+        return f"{self.name} | {self.sid} | base: {self.base} | added: {self.total_additives} | multi: {self.total_multiplier} | total: {self.total}"
